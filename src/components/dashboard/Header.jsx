@@ -67,7 +67,6 @@ const BottomItems = [
 
 const Header = (props) => {
   const classes = useStyles();
-  let collegeid = localStorage.getItem('collegeid');
   const theme = useTheme();
 
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
