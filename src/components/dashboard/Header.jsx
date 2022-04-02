@@ -1,10 +1,10 @@
 import React from "react";
-import { AppBar, Toolbar, Typography, CssBaseline, useScrollTrigger, Slide, IconButton, Box, SwipeableDrawer, Icon } from "@mui/material"
+import { AppBar, Toolbar, Typography, CssBaseline, useScrollTrigger, Slide, IconButton, Box, SwipeableDrawer, Icon, useMediaQuery } from "@mui/material"
 import PropTypes from 'prop-types';
 import { makeStyles } from '@mui/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Global } from "@emotion/react";
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { grey } from "@mui/material/colors";
 import { Link } from "react-router-dom";
 
@@ -29,6 +29,14 @@ const useStyles = makeStyles({
     height: '50px',
     display: 'flex',
     justifyContent: 'center',
+  },
+  navLink: {
+    color: '#fff',
+    textDecoration: 'none',
+    padding: '4px 10px',
+    '&:hover': {
+      color: '#ffffff90',
+    }
   }
 })
 
@@ -60,6 +68,9 @@ const BottomItems = [
 const Header = (props) => {
   const classes = useStyles();
   let collegeid = localStorage.getItem('collegeid');
+  const theme = useTheme();
+
+  const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
   const [open, setOpen] = React.useState(false);
 
@@ -81,7 +92,7 @@ const Header = (props) => {
       <HideOnScroll {...props}>
         <AppBar className={classes.tabbar}>
           <Toolbar style={{backgroundColor: '#eea852'}}>
-            <IconButton
+          { !matches && <IconButton
               size="large"
               edge="start"
               color="inherit"
@@ -91,60 +102,70 @@ const Header = (props) => {
             >
               <MenuIcon />
             </IconButton>
-            <Typography>Placements</Typography>
+          }
+            <Typography variant="h6">Placements</Typography>
             <span style={{flexGrow: 1}}></span>
-            <Typography>{collegeid}</Typography>
+            { matches && 
+              <>
+                <Link className={classes.navLink} to="/">Home</Link>
+                <Link className={classes.navLink} to="/">My Jobs</Link>
+                <Link className={classes.navLink} to="/">My Details</Link>
+                <Link className={classes.navLink} to="/">Profile</Link>
+              </>
+            }
           </Toolbar>
         </AppBar>
       </HideOnScroll>
       <Toolbar />
-      <SwipeableDrawer
-        // container={container}
-        anchor="bottom"
-        open={open}
-        onClose={toggleDrawer(false)}
-        onOpen={toggleDrawer(true)}
-        swipeAreaWidth={drawerBleeding}
-        disableSwipeToOpen={false}
-        ModalProps={{
-          keepMounted: true,
-        }}
-      >
-        <StyledBox
-          sx={{
-            position: 'absolute',
-            top: -drawerBleeding,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            visibility: 'visible',
-            right: 0,
-            left: 0,
+      { !matches && 
+        <SwipeableDrawer
+          // container={container}
+          anchor="bottom"
+          open={open}
+          onClose={toggleDrawer(false)}
+          onOpen={toggleDrawer(true)}
+          swipeAreaWidth={drawerBleeding}
+          disableSwipeToOpen={false}
+          ModalProps={{
+            keepMounted: true,
           }}
         >
-          <Puller />
-          <Typography sx={{ p: 2, color: 'text.primary', fontSize: 18 }}>Placements</Typography>
-        </StyledBox>
-        <StyledBox
-          sx={{
-            px: 2,
-            pb: 2,
-            height: '100%',
-            overflow: 'auto',
-          }}
-        >
-          <div style={{display: 'flex', flexWrap: 'wrap', alignSelf: 'center', width: '100%'}}>
-          {BottomItems.map((item, index) => (
-            <Box component={Link} to={item.route} key={index} sx={{ p: 1, cursor: 'pointer', width: 'max-content', borderRadius: "8px", display: 'flex', flexDirection: "row", margin: "6px", justifyContent: "center", alignItems: "center", textAlign: "center", boxShadow: "3px 3px 8px #12121220", backgroundColor: '#eea852', textDecoration: 'none'}} onClick={ toggleDrawer(false)}>
-              <IconButton>
-                <Icon baseClassName="material-icons-round" style={{color: '#fff'}}>{item.icon}</Icon>
-              </IconButton>
-              <Typography style={{color: '#fff'}}>{item.name}</Typography>
-            </Box>
-          ))}
-          </div>
-          {/* <Skeleton variant="rectangular" height="100%" /> */}
-        </StyledBox>
-      </SwipeableDrawer>
+          <StyledBox
+            sx={{
+              position: 'absolute',
+              top: -drawerBleeding,
+              borderTopLeftRadius: 8,
+              borderTopRightRadius: 8,
+              visibility: 'visible',
+              right: 0,
+              left: 0,
+            }}
+          >
+            <Puller />
+            <Typography sx={{ p: 2, color: 'text.primary', fontSize: 18 }}>Placements</Typography>
+          </StyledBox>
+          <StyledBox
+            sx={{
+              px: 2,
+              pb: 2,
+              height: '100%',
+              overflow: 'auto',
+            }}
+          >
+            <div style={{display: 'flex', flexWrap: 'wrap', alignSelf: 'center', width: '100%'}}>
+            {BottomItems.map((item, index) => (
+              <Box component={Link} to={item.route} key={index} sx={{ padding: "2px 6px", cursor: 'pointer', width: 'max-content', borderRadius: "8px", display: 'flex', flexDirection: "row", margin: "6px", justifyContent: "center", alignItems: "center", textAlign: "center", boxShadow: "3px 3px 8px #12121220", backgroundColor: '#eea852', textDecoration: 'none'}} onClick={ toggleDrawer(false)}>
+                <IconButton>
+                  <Icon baseClassName="material-icons-round" style={{color: '#fff'}}>{item.icon}</Icon>
+                </IconButton>
+                <Typography style={{color: '#fff'}}>{item.name}</Typography>
+              </Box>
+            ))}
+            </div>
+            {/* <Skeleton variant="rectangular" height="100%" /> */}
+          </StyledBox>
+        </SwipeableDrawer>
+      }
     </React.Fragment>
   )
 }
