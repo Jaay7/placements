@@ -107,9 +107,9 @@ const Header = (props) => {
             { matches && 
               <>
                 <Link className={classes.navLink} to="/">Home</Link>
-                <Link className={classes.navLink} to="/">My Jobs</Link>
-                <Link className={classes.navLink} to="/">My Details</Link>
-                <Link className={classes.navLink} to="/">Profile</Link>
+                <Link className={classes.navLink} to="/my-jobs">My Jobs</Link>
+                <Link className={classes.navLink} to="/my-details">My Details</Link>
+                <Link className={classes.navLink} to="/profile">Profile</Link>
               </>
             }
           </Toolbar>
