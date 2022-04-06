@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Typography, Button } from '@mui/material'
+import { TextField, Typography, Button, CircularProgress } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import { useNavigate, Link, Navigate } from "react-router-dom"
 import { styled } from '@mui/material/styles';
@@ -49,7 +49,7 @@ const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => 
   marginTop: '10px',
   padding: '10px 30px',
   fontSize: 14,
-  height: 'max-content',
+  height: '50px',
   display: 'flex',
   alignItems: 'center',
   outline: 'none',
@@ -81,17 +81,10 @@ const Login = () => {
     return <Navigate to="/" />
   }
 
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  if (error) {
-    return <div>Error! {error.message}</div>
-  }
-  
   return (
     <div className={classes.container}>
       <div className={classes.form}>
+        { error && <Typography color="red">Oops! Something went wrong.</Typography> }
         <Typography variant="h6">Login</Typography>
         <StyledTextField 
           label="Username" 
@@ -116,7 +109,7 @@ const Login = () => {
               navigate('/');
             }
           }}
-        >Login</ContainedButton>
+        >{loading ? <CircularProgress size={28} color="inherit" /> : "Login"}</ContainedButton>
         <Typography style={{marginTop: 10}}>Don't have an account? <Link to="/signup" className={classes.links}>Signup</Link></Typography>
       </div>
     </div>
