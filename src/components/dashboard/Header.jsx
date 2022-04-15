@@ -7,6 +7,7 @@ import { Global } from "@emotion/react";
 import { styled, useTheme } from '@mui/material/styles';
 import { grey } from "@mui/material/colors";
 import { Link } from "react-router-dom";
+import { useLocation } from 'react-router';
 
 const drawerBleeding = 56;
 
@@ -17,7 +18,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 const Puller = styled(Box)(({ theme }) => ({
   width: 30,
   height: 6,
-  backgroundColor: '#eea852',
+  backgroundColor: '#6c8780',
   borderRadius: 3,
   position: 'absolute',
   top: 8,
@@ -37,6 +38,22 @@ const useStyles = makeStyles({
     '&:hover': {
       color: '#ffffff90',
     }
+  },
+  mobileBoxItem: {
+    padding: "6px 16px", 
+    cursor: 'pointer', 
+    width: 'max-content', 
+    borderRadius: "50px", 
+    display: 'flex', 
+    flexDirection: "row", 
+    margin: "6px", 
+    justifyContent: "center", 
+    alignItems: "center", 
+    textAlign: "center", 
+    border: "1.5px solid #eea852",
+    backgroundColor: "#eea85210",
+    color: "#eea852",
+    textDecoration: 'none'
   }
 })
 
@@ -59,7 +76,7 @@ HideOnScroll.propTypes = {
 };
 
 const BottomItems = [
-  {name: "Home", icon: "home", route: "/"},
+  {name: "Home", icon: "home", route: "/home"},
   {name: "Registered Jobs", icon: "account_balance", route: "/my-jobs"},
   {name: "Student Details", icon: "credit_card", route: "/my-details"},
   {name: "Profile", icon: "subject", route: "/profile"},
@@ -68,6 +85,7 @@ const BottomItems = [
 const Header = (props) => {
   const classes = useStyles();
   const theme = useTheme();
+  let location = useLocation();
 
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
@@ -90,7 +108,7 @@ const Header = (props) => {
       />
       <HideOnScroll {...props}>
         <AppBar className={classes.tabbar}>
-          <Toolbar style={{backgroundColor: '#eea852'}}>
+          <Toolbar style={{backgroundColor: '#293934'}}>
           { !matches && <IconButton
               size="large"
               edge="start"
@@ -106,7 +124,7 @@ const Header = (props) => {
             <span style={{flexGrow: 1}}></span>
             { matches && 
               <>
-                <Link className={classes.navLink} to="/">Home</Link>
+                <Link className={classes.navLink} to="/home">Home</Link>
                 <Link className={classes.navLink} to="/my-jobs">My Jobs</Link>
                 <Link className={classes.navLink} to="/my-details">My Details</Link>
                 <Link className={classes.navLink} to="/profile">Profile</Link>
@@ -141,7 +159,14 @@ const Header = (props) => {
             }}
           >
             <Puller />
-            <Typography sx={{ p: 2, color: 'text.primary', fontSize: 18 }}>Placements</Typography>
+            <Typography sx={{ p: 2, color: 'text.primary', fontSize: 18 }}>
+              {
+                location.pathname === '/home' ? 'Home' : 
+                location.pathname === '/my-jobs' ? 'Registered Jobs' :
+                location.pathname === '/my-details' ? 'Student Details' :
+                location.pathname === '/profile' ? 'Profile' : 'Placements'
+              }
+              </Typography>
           </StyledBox>
           <StyledBox
             sx={{
@@ -153,11 +178,9 @@ const Header = (props) => {
           >
             <div style={{display: 'flex', flexWrap: 'wrap', alignSelf: 'center', width: '100%'}}>
             {BottomItems.map((item, index) => (
-              <Box component={Link} to={item.route} key={index} sx={{ padding: "2px 6px", cursor: 'pointer', width: 'max-content', borderRadius: "8px", display: 'flex', flexDirection: "row", margin: "6px", justifyContent: "center", alignItems: "center", textAlign: "center", boxShadow: "3px 3px 8px #12121220", backgroundColor: '#eea852', textDecoration: 'none'}} onClick={ toggleDrawer(false)}>
-                <IconButton>
-                  <Icon baseClassName="material-icons-round" style={{color: '#fff'}}>{item.icon}</Icon>
-                </IconButton>
-                <Typography style={{color: '#fff'}}>{item.name}</Typography>
+              <Box component={Link} to={item.route} key={index} className={classes.mobileBoxItem} onClick={ toggleDrawer(false)}>
+                <Icon baseClassName="material-icons-round" style={{color: '#eea852'}}>{item.icon}</Icon>
+                <Typography style={{color: '#eea852', marginLeft: 6}}>{item.name}</Typography>
               </Box>
             ))}
             </div>

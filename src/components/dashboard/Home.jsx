@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery, gql } from "@apollo/client";
-import { InputAdornment, TextField, Typography } from '@mui/material';
+import { CircularProgress, InputAdornment, TextField, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { styled } from '@mui/material/styles';
 import { Search } from '@mui/icons-material';
@@ -64,8 +64,10 @@ const Home = () => {
   });
 
   return (
-    loading ? <div>Loading...</div> :
-    error ? <div>Oops! Something went wrong.</div> :
+    loading ? <StyledDiv>
+      <CircularProgress color="inherit" />
+    </StyledDiv> :
+    error ? <StyledDiv>Oops! Something went wrong.</StyledDiv> :
     <StyledDiv>
       <Typography variant='h6'>Welcome, {data.me.username}!</Typography>
       <Typography color='GrayText'>Here goes the available companies which are arrived at our campus.</Typography>

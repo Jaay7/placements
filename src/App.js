@@ -8,14 +8,16 @@ import Dashboard from './components/dashboard/Dashboard';
 import RegisteredJobs from './components/dashboard/RegisteredJobs';
 import StudentDetails from './components/dashboard/StudentDetails';
 import Profile from './components/dashboard/Profile';
+import LandingPage from './components/dashboard/LandingPage';
 
 const App = () => {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/" element={<Dashboard />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/my-jobs" element={<RegisteredJobs />} />
             <Route path="/my-details" element={<StudentDetails />} />
             <Route path="/profile" element={<Profile />} />

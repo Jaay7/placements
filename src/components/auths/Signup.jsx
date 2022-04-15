@@ -1,7 +1,7 @@
 import React from 'react'
 import { TextField, Typography, Button } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate, Link, Navigate } from "react-router-dom"
 import { styled } from '@mui/material/styles';
 
 const useStyles = makeStyles({
@@ -17,21 +17,22 @@ const useStyles = makeStyles({
     width: 300
   },
   links: {
-    color: '#eea852',
+    color: '#6c8780',
     textDecoration: 'none',
   }
 })
 
 const StyledTextField = styled(TextField)({
   '& label.Mui-focused': {
-    color: '#eea852',
+    color: '#52635e',
   },
   '& .MuiInput-underline:after': {
-    borderBottomColor: '#eea852',
+    borderBottomColor: '#52635e',
   },
   '& .MuiOutlinedInput-root': {
+    borderRadius: '40px',
     '&.Mui-focused fieldset': {
-      borderColor: '#eea852',
+      borderColor: '#52635e',
     },
   },
 });
@@ -45,12 +46,13 @@ const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => 
   alignItems: 'center',
   outline: 'none',
   border: 'none',
-  backgroundColor: '#eea852',
+  borderRadius: '50px',
+  backgroundColor: '#293934',
   textTransform: 'Capitalize',
-  color: '#464646',
+  color: '#f2f2f2',
   fontWeight: 500,
   '&:hover': {
-    backgroundColor: '#eea152',
+    backgroundColor: '#293934da',
   }
 }));
 
@@ -58,12 +60,24 @@ const Signup = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   
+  if(localStorage.getItem('token')) {
+    return <Navigate to="/home" />
+  }
+
   return (
     <div className={classes.container}>
       <div className={classes.form}>
         <Typography variant="h6">Signup</Typography>
-        <StyledTextField label="Email" margin="normal" />
-        <StyledTextField label="Password" margin="normal" />
+        <StyledTextField 
+          label="Email" 
+          margin="normal" 
+          size='small'
+        />
+        <StyledTextField 
+          label="Password" 
+          margin="normal" 
+          size='small'
+        />
         <ContainedButton
           onClick={() => navigate('/')}
         >Signup</ContainedButton>
