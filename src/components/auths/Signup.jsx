@@ -39,20 +39,22 @@ const StyledTextField = styled(TextField)({
 
 const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => ({
   marginTop: '10px',
-  padding: '10px 30px',
+  padding: '6px 30px',
   fontSize: 14,
-  height: 'max-content',
   display: 'flex',
   alignItems: 'center',
   outline: 'none',
-  border: 'none',
+  border: '2px solid #293934',
   borderRadius: '50px',
   backgroundColor: '#293934',
   textTransform: 'Capitalize',
   color: '#f2f2f2',
+  transition: 'all 0.3s ease-in-out',
   fontWeight: 500,
   '&:hover': {
-    backgroundColor: '#293934da',
+    color: '#293934da',
+    backgroundColor: 'transparent',
+    border: '2px solid #293934',
   }
 }));
 
