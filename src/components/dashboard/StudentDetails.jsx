@@ -1,7 +1,7 @@
 import React from 'react'
 import { useQuery, gql } from "@apollo/client";
-import { Typography, CircularProgress, IconButton, TextField } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Typography, CircularProgress, IconButton, TextField, useMediaQuery, Button } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import { EditRounded } from '@mui/icons-material';
 
@@ -20,15 +20,17 @@ const useStyles = makeStyles({
   form: {
     display: 'flex',
     flexDirection: 'column',
-    // padding: '20px 20px'
-    border: '2px solid #e2e2e2',
+    padding: '30px 30px',
+    boxShadow: '2px 2px 10px #e2e2e2',
     borderRadius: 5,
     alignSelf: 'center',
+    backgroundColor: '#fff',
   },
   box: {
     display: 'flex',
     flexDirection: 'row',
-    padding: '10px 20px',
+    flexWrap: 'wrap',
+    padding: '2px 0px',
     alignItems: 'baseline',
     // borderBottom: '1px solid #e2e2e2',
   },
@@ -51,8 +53,33 @@ const StyledDiv = styled((props) => <div {...props} />)(({ theme }) => ({
   }
 }));
 
+const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => ({
+  marginTop: '10px',
+  padding: '6px 30px',
+  fontSize: 14,
+  width: 'max-content',
+  display: 'flex',
+  alignItems: 'center',
+  outline: 'none',
+  borderRadius: '50px',
+  color: '#f2f2f2',
+  backgroundColor: '#293934',
+  border: '2px solid #293934',
+  textTransform: 'Capitalize',
+  transition: 'all 0.3s ease-in-out',
+  fontWeight: 500,
+  '&:hover': {
+    color: '#293934da',
+    backgroundColor: 'transparent',
+    border: '2px solid #293934',
+  }
+}));
+
+
 const StudentDetails = () => {
   const classes = useStyles();
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { data, loading, error } = useQuery(get_student_details, {
     context: {
@@ -70,10 +97,72 @@ const StudentDetails = () => {
   const [skills, setSkills] = React.useState('');
 
   return (
-    loading ? <StyledDiv>
+    <div style={{height: 'calc(100vh - 64px)', backgroundColor: '#f5f5f5'}}>
+    {loading ? <StyledDiv>
       <CircularProgress color="inherit" />
     </StyledDiv> :
-    error ? <div>Error! {error.message}</div> :
+    error.message === 'StudentDetails matching query does not exist.' ? <StyledDiv>
+      <div className={classes.form} style={{marginTop: 20}}>
+      <Typography variant="h6">
+        No Details Found for this Student.
+      </Typography>
+      <Typography variant="body1" style={{marginBottom: 10}}>
+        Please add your details below to continue.
+      </Typography>
+        <div className={classes.box}>
+          <Typography variant="p" className={classes.labels}>Education</Typography>
+          <TextField
+            size='small'
+            value={education}
+            margin="normal"
+            fullWidth
+            onChange={(e) => setEducation(e.target.value)}
+          />
+        </div>
+        <div className={classes.box}>
+          <Typography variant="p" className={classes.labels}>Current CGPA</Typography>
+          <TextField
+            size='small'
+            value={currentCgpa}
+            margin="normal"
+            fullWidth
+            onChange={(e) => setCurrentCgpa(e.target.value)}
+          />
+        </div>
+        <div className={classes.box}>
+          <Typography variant="p" className={classes.labels}>Experience</Typography>
+          <TextField
+            size='small'
+            value={experience}
+            margin="normal"
+            fullWidth
+            onChange={(e) => setExperience(e.target.value)}
+          />
+        </div>
+        <div className={classes.box}>
+          <Typography variant="p" className={classes.labels}>Skills</Typography>
+          <TextField
+            size='small'
+            value={skills}
+            margin="normal"
+            fullWidth
+            onChange={(e) => setSkills(e.target.value)}
+          />
+        </div>
+        <ContainedButton
+          onClick={() => {
+            // setEdit(false);
+            // setEducation(''); 
+            // setCurrentCgpa('');
+            // setExperience('');
+            // setSkills('');
+          }}
+        >
+          Add Details
+        </ContainedButton>
+      </div>
+    </StyledDiv> :
+      error ? <div>Error! {error.message}</div> :
     <StyledDiv>
       <Typography gutterBottom variant="h5" component="h2" align="center">
         Student Details
@@ -133,7 +222,8 @@ const StudentDetails = () => {
           />
         </div>
       </div>
-    </StyledDiv>
+    </StyledDiv>}
+    </div>
   )
 }
 
