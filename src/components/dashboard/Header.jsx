@@ -27,9 +27,9 @@ const Puller = styled(Box)(({ theme }) => ({
 
 const useStyles = makeStyles({
   tabbar: {
-    height: '50px',
     display: 'flex',
     justifyContent: 'center',
+    boxShadow: 'none'
   },
   navLink: {
     color: '#fff',
