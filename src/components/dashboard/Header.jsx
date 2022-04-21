@@ -32,11 +32,11 @@ const useStyles = makeStyles({
     boxShadow: 'none'
   },
   navLink: {
-    color: '#fff',
+    color: '#ffffff90',
     textDecoration: 'none',
     padding: '4px 10px',
     '&:hover': {
-      color: '#ffffff90',
+      color: '#ffffffaa',
     }
   },
   mobileBoxItem: {
@@ -54,6 +54,11 @@ const useStyles = makeStyles({
     backgroundColor: "#eea85210",
     color: "#eea852",
     textDecoration: 'none'
+  },
+  activeNavLink: {
+    color: '#fff',
+    textDecoration: 'none',
+    padding: '4px 10px',
   }
 })
 
@@ -121,13 +126,14 @@ const Header = (props) => {
             </IconButton>
           }
             <Typography variant="h6">Placements</Typography>
-            <span style={{flexGrow: 1}}></span>
+            <span style={{flexGrow: 0.1}}></span>
             { matches && 
               <>
-                <Link className={classes.navLink} to="/home">Home</Link>
-                <Link className={classes.navLink} to="/my-jobs">My Jobs</Link>
-                <Link className={classes.navLink} to="/my-details">My Details</Link>
-                <Link className={classes.navLink} to="/profile">Profile</Link>
+                <Link className={location.pathname === '/home' ? classes.activeNavLink : classes.navLink} to="/home">Home</Link>
+                <Link className={location.pathname === '/my-jobs' ? classes.activeNavLink : classes.navLink} to="/my-jobs">My Jobs</Link>
+                <Link className={location.pathname === '/my-details' ? classes.activeNavLink : classes.navLink} to="/my-details">My Details</Link>
+                <span style={{flexGrow: 1}}></span>
+                <Link className={location.pathname === '/profile' ? classes.activeNavLink : classes.navLink} to="/profile">Profile</Link>
               </>
             }
           </Toolbar>
