@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, useMutation } from "@apollo/client";
 import { Typography, CircularProgress, IconButton, TextField, useMediaQuery, Button } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
@@ -15,6 +15,21 @@ query StudentDetails {
   }
 }
 `
+
+const add_student_details = gql`
+mutation AddStudentDetails($education: String!, $currentCgpa: String!, $experience: String!, $skills: String!) {
+  addStudentDetails(
+      education: $education,
+      currentCgpa: $currentCgpa,
+      experience: $experience,
+      skills: $skills
+  ) {
+      studentId
+      education
+      experience
+  }
+}
+`;
 
 const useStyles = makeStyles({
   form: {
@@ -75,6 +90,19 @@ const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => 
   }
 }));
 
+const StyledTextField = styled(TextField)({
+  '& label.Mui-focused': {
+    color: '#52635e',
+  },
+  '& .MuiInput-underline:after': {
+    borderBottomColor: '#52635e',
+  },
+  '& .MuiOutlinedInput-root': {
+    '&.Mui-focused fieldset': {
+      borderColor: '#52635e',
+    },
+  },
+});
 
 const StudentDetails = () => {
   const classes = useStyles();
@@ -96,12 +124,26 @@ const StudentDetails = () => {
   const [experience, setExperience] = React.useState('');
   const [skills, setSkills] = React.useState('');
 
+  const [ add_details, {data1, loading1, error1}] = useMutation(add_student_details, {
+    context: {
+      headers: {
+        authorization: 'JWT ' + localStorage.getItem('token')
+      }
+    },
+    variables: {
+      education: education,
+      currentCgpa: currentCgpa,
+      experience: experience,
+      skills: skills
+    },
+  });
+
   return (
     <div style={{height: 'calc(100vh - 64px)', backgroundColor: '#f5f5f5'}}>
     {loading ? <StyledDiv>
       <CircularProgress color="inherit" />
     </StyledDiv> :
-    error.message === 'StudentDetails matching query does not exist.' ? <StyledDiv>
+    error && error.message === 'StudentDetails matching query does not exist.' ? <StyledDiv>
       <div className={classes.form} style={{marginTop: 20}}>
       <Typography variant="h6">
         No Details Found for this Student.
@@ -111,7 +153,7 @@ const StudentDetails = () => {
       </Typography>
         <div className={classes.box}>
           <Typography variant="p" className={classes.labels}>Education</Typography>
-          <TextField
+          <StyledTextField
             size='small'
             value={education}
             margin="normal"
@@ -121,7 +163,7 @@ const StudentDetails = () => {
         </div>
         <div className={classes.box}>
           <Typography variant="p" className={classes.labels}>Current CGPA</Typography>
-          <TextField
+          <StyledTextField
             size='small'
             value={currentCgpa}
             margin="normal"
@@ -131,7 +173,7 @@ const StudentDetails = () => {
         </div>
         <div className={classes.box}>
           <Typography variant="p" className={classes.labels}>Experience</Typography>
-          <TextField
+          <StyledTextField
             size='small'
             value={experience}
             margin="normal"
@@ -141,7 +183,7 @@ const StudentDetails = () => {
         </div>
         <div className={classes.box}>
           <Typography variant="p" className={classes.labels}>Skills</Typography>
-          <TextField
+          <StyledTextField
             size='small'
             value={skills}
             margin="normal"
@@ -151,14 +193,11 @@ const StudentDetails = () => {
         </div>
         <ContainedButton
           onClick={() => {
-            // setEdit(false);
-            // setEducation(''); 
-            // setCurrentCgpa('');
-            // setExperience('');
-            // setSkills('');
+            add_details();
+            console.log(data1);
           }}
         >
-          Add Details
+          {loading1 ? <CircularProgress size={28} color="inherit" /> : "Add Details"}
         </ContainedButton>
       </div>
     </StyledDiv> :
@@ -179,45 +218,49 @@ const StudentDetails = () => {
         </IconButton>
         <div className={classes.box}>
           <Typography variant="p" className={classes.labels}>Education</Typography>
-          <TextField
+          <StyledTextField
             disabled={!edit}
             value={data.studentDetails.education}
             variant="outlined"
             margin="normal"
             fullWidth
+            size="small"
             onChange={(e) => setEducation(e.target.value)}
           />
         </div>
         <div className={classes.box}>
           <Typography variant="p" className={classes.labels}>Current CGPA</Typography>
-          <TextField
+          <StyledTextField
             disabled={!edit}
             value={data.studentDetails.currentCgpa}
             variant="outlined"
             margin="normal"
             fullWidth
+            size="small"
             onChange={(e) => setCurrentCgpa(e.target.value)}
           />
         </div>
         <div className={classes.box}>
           <Typography variant="p" className={classes.labels}>Experience</Typography>
-          <TextField
+          <StyledTextField
             disabled={!edit}
             value={data.studentDetails.experience}
             variant="outlined"
             margin="normal"
             fullWidth
+            size="small"
             onChange={(e) => setExperience(e.target.value)}
           />
         </div>
         <div className={classes.box}>
           <Typography variant="p" className={classes.labels}>Skills</Typography>
-          <TextField
+          <StyledTextField
             disabled={!edit}
             value={data.studentDetails.skills}
             variant="outlined"
             margin="normal"
             fullWidth
+            size="small"
             onChange={(e) => setSkills(e.target.value)}
           />
         </div>
