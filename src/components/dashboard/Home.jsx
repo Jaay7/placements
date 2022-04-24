@@ -4,6 +4,7 @@ import { CircularProgress, InputAdornment, TextField, Typography, Stack, Chip, B
 import { makeStyles } from '@mui/styles';
 import { styled } from '@mui/material/styles';
 import { Search, PlaceRounded, BookmarkBorderRounded } from '@mui/icons-material';
+import { Link } from 'react-router-dom'
 
 const get_user_data = gql`
   query {
@@ -188,7 +189,7 @@ const GetJobs = () => {
           </Stack>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{marginTop: 2}}>
             <BookmarkBorderRounded style={{color: '#293934'}} />
-            <ContainedButton>View Job</ContainedButton>
+            <ContainedButton component={Link} to={`/jobs/${job.id}`}>View Job</ContainedButton>
           </Stack>
         </StyledCard>
       ))}

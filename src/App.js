@@ -9,6 +9,7 @@ import RegisteredJobs from './components/dashboard/RegisteredJobs';
 import StudentDetails from './components/dashboard/StudentDetails';
 import Profile from './components/dashboard/Profile';
 import LandingPage from './components/dashboard/LandingPage';
+import ViewJob from './components/screens/ViewJob';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
             <Route path="/my-jobs" element={<RegisteredJobs />} />
             <Route path="/my-details" element={<StudentDetails />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/jobs/:id" element={<ViewJob />} />
           </Route>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
