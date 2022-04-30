@@ -2,7 +2,7 @@ import React from 'react'
 import { useQuery, gql } from "@apollo/client";
 import { Typography, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const get_user_data = gql`
   query {
@@ -45,6 +45,7 @@ const StyledDiv = styled((props) => <div {...props} />)(({ theme }) => ({
 
 const Profile = () => {
   
+  const navigate = useNavigate();
   const { data, loading, error } = useQuery(get_user_data, {
     context: {
       headers: {
@@ -56,7 +57,7 @@ const Profile = () => {
 
   const handleLogout = async() => {
     await localStorage.removeItem('token');
-    return <Navigate to="/login" />
+    navigate('/login');
   }
 
   return (
