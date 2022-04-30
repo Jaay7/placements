@@ -1,10 +1,10 @@
 import React from 'react'
 import { useQuery, gql } from "@apollo/client";
-import { useParams } from 'react-router-dom';
-import { CircularProgress, Typography, Stack, Button, Chip, Divider } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { useParams, useNavigate } from 'react-router-dom';
+import { CircularProgress, Typography, Stack, Button, Chip, Divider, useMediaQuery } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
-import { PlaceRounded, BookmarkBorderRounded } from '@mui/icons-material';
+import { PlaceRounded, BookmarkBorderRounded, ChevronLeft } from '@mui/icons-material';
 
 const get_job = gql`
   query Job($id: ID!) {
@@ -65,7 +65,7 @@ const StyledCard = styled((props) => <div {...props} />)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  backgroundColor: '#eea85230',
+  backgroundColor: '#e7ffd6',
   backdropFilter: 'blur(5px)',
   borderRadius: '8px',
   marginTop: '20px',
@@ -74,27 +74,25 @@ const StyledCard = styled((props) => <div {...props} />)(({ theme }) => ({
   }
 }));
 
-const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => ({
+const OutlinedButton = styled((props) => <Button {...props} />)(({ theme }) => ({
   width: 'max-content',
   padding: '6px 20px',
   outline: 'none',
   border: '2px solid #293934',
   borderRadius: '50px',
-  backgroundColor: '#293934',
+  backgroundColor: 'transparent',
   textTransform: 'Capitalize',
-  color: '#f2f2f2',
+  color: '#293934',
   transition: 'all 0.3s ease-in-out',
   fontWeight: 500,
-  '&:hover': {
-    color: '#293934da',
-    backgroundColor: 'transparent',
-    border: '2px solid #293934',
-  }
 }));
 
 const ViewJob = (props) => {
   const classes = useStyles();
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('md'));
   let { id } = useParams();
+  const navigate = useNavigate();
   const { data, loading, error } = useQuery(get_job, {
     variables: { id: id },
     pollInterval: 500
@@ -105,6 +103,10 @@ const ViewJob = (props) => {
     </StyledDiv> :
     error ? <StyledDiv>Oops! Something went wrong.</StyledDiv> :
     <StyledDiv>
+      <Stack direction="row" alignItems="center" onClick={() => navigate('/home')} style={{cursor: 'pointer'}}>
+        <ChevronLeft />
+        <Typography variant="body1" style={{fontSize: 17}}>Back to Home</Typography>
+      </Stack>
       <StyledCard>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Stack direction="column">
@@ -121,34 +123,48 @@ const ViewJob = (props) => {
               return <Chip label={item} key={index} style={{marginTop: 5, marginLeft: 5}} />
             })}
           </Stack>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{marginTop: 2}}>
-            <BookmarkBorderRounded style={{color: '#293934'}} />
-            <ContainedButton>Apply Job</ContainedButton>
+          <Stack direction="row" justifyContent="center" alignItems="center" sx={{marginTop: 2}}>
+          <div style={{display: 'flex', alignItems: 'center', padding: '6px 20px', marginRight: 20, cursor: 'pointer'}}>
+            <BookmarkBorderRounded style={{color: '#293934', marginRight: 5}} />
+            <Typography variant="body2" color="#293934" style={{fontWeight: 500}}>Save</Typography>
+          </div>
+            <OutlinedButton>Apply Job</OutlinedButton>
           </Stack>
           <Divider sx={{marginTop: 3, marginBottom: 2}} />
-          <Stack direction="column">
-            <Typography variant="h6" sx={{marginTop: 2, marginBottom: 1}}>Job Description</Typography>
+          <Stack direction={matches ? "column" : "row"} alignItems="flex-start">
+            <Typography variant="h6" sx={{marginTop: 2, marginBottom: 1, width: matches ? '100%' :'25%'}}>Job Description</Typography>
+            <div style={{width: '100%'}}>
             {data.job.jobDescription.split('|').map((item, index) => {
               return <Typography variant="body1" key={index}>{item}</Typography>
             })}
+            </div>
           </Stack>
-          <Stack direction="column">
-            <Typography variant="h6" sx={{marginTop: 2, marginBottom: 1}}>Job Requirements</Typography>
+          <Divider sx={{marginTop: 3, marginBottom: 2}} />
+          <Stack direction={matches ? "column" : "row"} alignItems="flex-start">
+            <Typography variant="h6" sx={{marginTop: 2, marginBottom: 1, width: matches ? '100%' :'25%'}}>Job Requirements</Typography>
+            <div style={{width: '100%'}}>
             {data.job.jobRequirements.split('|').map((item, index) => {
               return <Typography variant="body1" key={index}>{item}</Typography>
             })}
+            </div>
           </Stack>
-          <Stack direction="column">
-            <Typography variant="h6" sx={{marginTop: 2, marginBottom: 1}}>Job Qualifications</Typography>
+          <Divider sx={{marginTop: 3, marginBottom: 2}} />
+          <Stack direction={matches ? "column" : "row"} alignItems="flex-start">
+            <Typography variant="h6" sx={{marginTop: 2, marginBottom: 1, width: matches ? '100%' :'25%' }}>Job Qualifications</Typography>
+            <div style={{width: '100%'}}>
             {data.job.jobPrefQualifications.split('|').map((item, index) => {
               return <Typography variant="body1" key={index}>{item}</Typography>
             })}
+            </div>
           </Stack>
-          <Stack direction="column">
-            <Typography variant="h6" sx={{marginTop: 2, marginBottom: 1}}>Education</Typography>
+          <Divider sx={{marginTop: 3, marginBottom: 2}} />
+          <Stack direction={matches ? "column" : "row"} alignItems="flex-start">
+            <Typography variant="h6" sx={{marginTop: 2, marginBottom: 1, width: matches ? '100%' :'25%' }}>Education</Typography>
+            <div style={{width: '100%'}}>
             {data.job.jobEducation.split('|').map((item, index) => {
               return <Typography variant="body1" key={index}>{item}</Typography>
             })}
+            </div>
           </Stack>
         </StyledCard>
     </StyledDiv>

@@ -74,27 +74,27 @@ const StyledDiv = styled((props) => <div {...props} />)(({ theme }) => ({
 }));
 
 const StyledTextField = styled((props) => <TextField {...props} />)(({ theme }) => ({
-  marginTop: 16,
+  margin: 30,
+  width: '100%',
   '& label.Mui-focused': {
-    color: '#eea852',
+    color: '#859d76',
   },
   '& .MuiInput-underline:after': {
-    borderBottomColor: '#eea852',
+    borderBottomColor: '#859d76',
   },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused fieldset': {
-      borderColor: '#eea852',
+      borderColor: '#859d76',
     },
   },
   [theme.breakpoints.up('sm')]: {
-    width: '400px'
+    // width: '400px'
   }
 }));
 
 const Home = () => {
-  const classes = useStyles();
   
-  const { data, loading, error } = useQuery(get_user_data, {
+  const { loading, error } = useQuery(get_user_data, {
     context: {
       headers: {
         authorization: 'JWT ' + localStorage.getItem('token')
@@ -107,19 +107,21 @@ const Home = () => {
     loading ? <StyledDiv>
       <CircularProgress color="inherit" style={{alignSelf: 'center'}} />
     </StyledDiv> :
-    error ? <StyledDiv>Oops! Something went wrong.</StyledDiv> :
+    error ? <StyledDiv>Oops! Something went wrong. {error.message}</StyledDiv> :
     <StyledDiv>
-      <Typography variant='h6'>Welcome, {data.me.username}!</Typography>
-      <Typography color='GrayText'>Here goes the available companies which are arrived at our campus.</Typography>
-      <StyledTextField 
-        placeholder='Search for jobs...'
-        variant='standard'
-        type='search'
-        InputProps={{
-          startAdornment: <InputAdornment position="start"><Search /></InputAdornment>,
-        }}
-      />
-      <GetJobs />
+      {/* <Typography variant='h6'>Welcome, {data.me.username}!</Typography>
+      <Typography color='GrayText'>Here goes the available companies which are arrived at our campus.</Typography> */}
+      <div style={{alignSelf: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
+        <Typography variant='h5'>Find your perfect role.</Typography>
+        <StyledTextField 
+          placeholder='Search for jobs...'
+          type='search'
+          InputProps={{
+            startAdornment: <InputAdornment position="start"><Search /></InputAdornment>,
+          }}
+          />
+        <GetJobs />
+      </div>
     </StyledDiv>
   )
 }
@@ -129,16 +131,17 @@ export default Home
 const StyledCard = styled((props) => <div {...props} />)(({ theme }) => ({
   padding: '20px 30px',
   width: '100%',
-  maxWidth: '720px',
+  minWidth: '720px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
-  backgroundColor: '#eea85230',
+  backgroundColor: '#e7ffd6',
   backdropFilter: 'blur(5px)',
   borderRadius: '8px',
   marginTop: '20px',
-  [theme.breakpoints.down('sm')]: {
-    padding: '20px 20px'
+  [theme.breakpoints.down('md')]: {
+    padding: '20px 20px',
+    minWidth: '100%',
   }
 }));
 
@@ -183,7 +186,8 @@ const GetJobs = () => {
           </Stack>
           <Stack direction="row" alignItems="center" flexWrap={'wrap'} sx={{marginTop: 1}}>
             <PlaceRounded />
-            {job.jobLocation.split('|').map((item, index) => {
+            <Typography variant="body1">{job.jobLocation.split('|').length}</Typography>
+            {job.jobLocation.split('|').sort().slice(0, 3).map((item, index) => {
               return <Chip label={item} key={index} style={{marginTop: 5, marginLeft: 5}} />
             })}
           </Stack>
