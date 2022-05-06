@@ -3,9 +3,10 @@ import Hands from '../assets/hands.png';
 import { makeStyles } from '@mui/styles';
 import { styled, useTheme } from '@mui/material/styles';
 import { Link, Navigate } from 'react-router-dom';
-import { Typography, Button } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useMediaQuery } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
+import ContainedButton from '../utils';
 
 const useStyles = makeStyles({
   container: {
@@ -42,28 +43,35 @@ const useStyles = makeStyles({
       backgroundColor: '#293934',
       color: '#fff',
     }
-  }
+  },
+  vector: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: '300px',
+    height: '300px',
+    backgroundColor: '#859d76',
+    transform: 'rotate(-90deg)',
+    borderTopLeftRadius: '300px',
+    boxShadow: "inset 0px 0px 12px #00000040",
+    zIndex: 0,
+  },
+  vector2: {
+    position: 'absolute',
+    top: 60,
+    left: 60,
+    width: '100px',
+    height: '100px',
+    backgroundColor: '#b5cea540',
+    backdropFilter: 'blur(5px)',
+    transform: 'rotate(90deg)',
+    borderRadius: '300px',
+    border: '2px solid #29393430',
+    boxShadow: "inset 0px 0px 18px #29393420",
+    zIndex: 0,
+  },
 })
 
-const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => ({
-  width: '300px',
-  padding: '10px 20px',
-  outline: 'none',
-  border: '2px solid #293934',
-  borderRadius: '10px',
-  backgroundColor: '#293934',
-  textTransform: 'Capitalize',
-  color: '#f2f2f2',
-  marginTop: '30px',
-  transition: 'all 0.3s ease-in-out',
-  boxShadow: '0px 4px 6px #00000030',
-  fontWeight: 500,
-  '&:hover': {
-    color: '#293934da',
-    backgroundColor: 'transparent',
-    border: '2px solid #293934',
-  }
-}));
 
 const StyledDiv = styled((props) => <div {...props} />)(({ theme }) => ({
   padding: '20px 160px',
@@ -94,22 +102,20 @@ const LandingPage = () => {
 
   return (
     <div className={classes.container}>
-      {/* <div className={classes.appBar}>
-        <Link className={classes.links} to="/login"><Typography variant="body2">Login</Typography></Link>
-        <Link className={classes.links} to="/signup"><Typography variant="body2">Signup</Typography></Link>
-        <span style={{flex: 0.1}}></span>
-      </div> */}
+      {/* <div className={classes.vector}></div> */}
+      {/* <div className={classes.vector2}></div> */}
       <StyledDiv>
-        <img src={Hands} style={{height: matchesSM ? 170 : matchesMD ? 240 : 350}} alt="svkjnd" />
+        <img src={Hands} style={{height: matchesSM ? 170 : matchesMD ? 240 : 350, zIndex: 1}} alt="svkjnd" />
         <div style={{marginLeft: 20}}>
           <Typography variant={matchesSM ? "p" : matchesMD ? "h6" : "h5"}>
             Welcome to,<br/> 
-            <Typography variant={matchesSM ? "h6" : matchesMD ? "h5" : "h3"} style={{fontWeight: 600}}>University</Typography>
-            <Typography variant={matchesSM ? "h6" : matchesMD ? "h5" : "h3"} style={{fontWeight: 600}}>Recruitment</Typography>
-            <Typography variant={matchesSM ? "h6" : matchesMD ? "h5" : "h3"} style={{fontWeight: 600}}>Protal.</Typography>
+            <Typography variant={matchesSM ? "h6" : matchesMD ? "h5" : "h3"} style={{fontWeight: 600, textShadow: '0px 3px 4px #00000030'}}>University</Typography>
+            <Typography variant={matchesSM ? "h6" : matchesMD ? "h5" : "h3"} style={{fontWeight: 600, textShadow: '0px 3px 4px #00000030'}}>Recruitment</Typography>
+            <Typography variant={matchesSM ? "h6" : matchesMD ? "h5" : "h3"} style={{fontWeight: 600, textShadow: '0px 3px 4px #00000030'}}>Portal.</Typography>
           </Typography>
           <ContainedButton
             component={Link}
+            style={{marginTop: 20, padding: '10px 20px'}}
             to="/login"
           >
             Get Started
