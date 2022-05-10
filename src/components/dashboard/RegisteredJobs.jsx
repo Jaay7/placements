@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, useMutation } from "@apollo/client";
 import { CircularProgress, Typography, Stack, Chip, Button } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { styled } from '@mui/material/styles';
@@ -7,20 +7,21 @@ import { PlaceRounded, BookmarkBorderRounded } from '@mui/icons-material';
 import { Link } from 'react-router-dom'
 
 const get_registered_jobs = gql`
-  query RegisteredJobs {
-    registeredJobs {
-      job {
-        id
-        jobTitle
-        companyName
-        companyLogo
-        jobLocation
-      }
-      user {
-        id
-        username
-      }
-      createdAt
+  query UserAppliedJobs {
+    userAppliedJobs {
+      id
+      jobTitle
+      companyName
+      companyLogo
+      jobLocation
+    }
+  }
+`;
+
+const remove_application = gql`
+  mutation RemoveAppliedJob($aplId: ID!) {
+    removeAppliedJob(aplId: $aplId) {
+      response
     }
   }
 `;
@@ -96,39 +97,57 @@ const RegisteredJobs = () => {
     pollInterval: 500
   });
 
+  const [removeApplication] = useMutation(remove_application, {
+    context: {
+      headers: {
+        authorization: 'JWT ' + localStorage.getItem('token')
+      }
+    },
+  });
+
   return (
     loading ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
-    error ? <Typography>Oops! Something went wrong.</Typography> :
+    error ? <Typography>Oops! Something went wrong, {error.message}</Typography> :
     <StyledDiv>
       <div style={{alignSelf: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
         <Typography variant="h6">Registered Jobs</Typography>
-        {data.registeredJobs.map(regJob => (
-          <StyledCard key={regJob.job.id}>
+        { data.userAppliedJobs.length > 0 ? data.userAppliedJobs.map(regJob => (
+          <StyledCard key={regJob.id}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
               <Stack direction="column">
-                <Typography variant="h6">{regJob.job.companyName}</Typography>
-                <Typography variant="h5">{regJob.job.jobTitle}</Typography>
+                <Typography variant="h6">{regJob.companyName}</Typography>
+                <Typography variant="h5">{regJob.jobTitle}</Typography>
               </Stack>
               <div className={classes.imgLogo}>
-                <img src={regJob.job.companyLogo} alt={regJob.job.companyName} height="100%" width="100%" />
+                <img src={regJob.companyLogo} alt={regJob.companyName} height="100%" width="100%" />
               </div>
             </Stack>
             <Stack direction="row" alignItems="center" flexWrap={'wrap'} sx={{marginTop: 1}}>
               <PlaceRounded />
-              <Typography variant="body1">{regJob.job.jobLocation.split('|').length}</Typography>
-              {regJob.job.jobLocation.split('|').sort().slice(0, 3).map((item, index) => {
+              <Typography variant="body1">{regJob.jobLocation.split('|').length}</Typography>
+              {regJob.jobLocation.split('|').sort().slice(0, 3).map((item, index) => {
                 return <Chip label={item} key={index} style={{marginTop: 5, marginLeft: 5}} />
               })}
             </Stack>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{marginTop: 2}}>
               <BookmarkBorderRounded style={{color: '#293934'}} />
               <div>
-                <ContainedButton component={Link} to={`/jobs/${regJob.job.id}`}>View Job</ContainedButton>
-                <ContainedButton style={{ opacity: 0.65}}>Remove</ContainedButton>
+                <ContainedButton component={Link} to={`/jobs/${regJob.id}`}>View Job</ContainedButton>
+                <ContainedButton style={{ opacity: 0.65}}
+                  onClick={() => {
+                    removeApplication({
+                      variables: {
+                        aplId: regJob.id
+                      },
+                    })
+                  }}
+                >Remove</ContainedButton>
               </div>
             </Stack>
           </StyledCard>
-        ))}
+        )) : 
+          <Typography>You haven't applied for any jobs</Typography>
+        }
       </div>
     </StyledDiv>
   )
