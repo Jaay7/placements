@@ -1,10 +1,10 @@
 import React from 'react'
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, useMutation} from "@apollo/client";
 import { useParams, useNavigate } from 'react-router-dom';
-import { CircularProgress, Typography, Stack, Button, Chip, Divider, useMediaQuery } from '@mui/material';
+import { CircularProgress, Typography, Stack, Button, Chip, Divider, useMediaQuery, Snackbar } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
-import { PlaceRounded, BookmarkBorderRounded, ChevronLeft } from '@mui/icons-material';
+import { PlaceRounded, BookmarkBorderRounded, ChevronLeft, BookmarkRounded } from '@mui/icons-material';
 
 const get_job = gql`
   query Job($id: ID!) {
@@ -34,6 +34,26 @@ const get_job = gql`
 			jobStartDate
 			jobCreatedAt
 			jobUpdatedAt
+    }
+  }
+`;
+
+const get_saved_jobs = gql`
+  query UserSavedJobs {
+    userSavedJobs {
+      id
+      jobTitle
+      companyName
+      companyLogo
+      jobLocation
+    }
+  }
+`;
+
+const apply_job = gql`
+  mutation ApplyJob($jobId: ID!) {
+    applyJob(jobId: $jobId) {
+      response
     }
   }
 `;
@@ -93,10 +113,43 @@ const ViewJob = (props) => {
   const matches = useMediaQuery(theme.breakpoints.down('md'));
   let { id } = useParams();
   const navigate = useNavigate();
+
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
+  };
+
   const { data, loading, error } = useQuery(get_job, {
     variables: { id: id },
     pollInterval: 500
   });
+
+  const { data: savedJobsData, loading: loading2, error: error2 } = useQuery(get_saved_jobs, {
+    context: {
+      headers: {
+        authorization: 'JWT ' + localStorage.getItem('token')
+      },
+    },
+    pollInterval: 500
+  })
+
+  const [applyJob] = useMutation(apply_job, {
+    context: {
+      headers: {
+        authorization: 'JWT ' + localStorage.getItem('token')
+      }
+    },
+    variables: { jobId: id },
+    onCompleted: () => {
+      setOpenSnackBar(true);
+    }
+  });
+
   return (
     loading ? <StyledDiv>
       <CircularProgress color="inherit" style={{alignSelf: 'center'}} />
@@ -125,10 +178,24 @@ const ViewJob = (props) => {
           </Stack>
           <Stack direction="row" justifyContent="center" alignItems="center" sx={{marginTop: 2}}>
           <div style={{display: 'flex', alignItems: 'center', padding: '6px 20px', marginRight: 20, cursor: 'pointer'}}>
-            <BookmarkBorderRounded style={{color: '#293934', marginRight: 5}} />
-            <Typography variant="body2" color="#293934" style={{fontWeight: 500}}>Save</Typography>
+          {
+              loading2 ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
+              error2 ? <Typography>Oops! Something went wrong.</Typography> :
+              savedJobsData.userSavedJobs.map(savedJob => savedJob.id).includes(data.job.id) ?
+              <>
+                <BookmarkRounded style={{color: '#293934'}} />
+                <Typography variant="body2" color="#293934" style={{fontWeight: 500}}>Saved</Typography>
+              </> :
+              <>
+                <BookmarkBorderRounded style={{color: '#293934', marginRight: 5}} />
+                <Typography variant="body2" color="#293934" style={{fontWeight: 500}}>Save</Typography>
+              </>
+            }
+            
           </div>
-            <OutlinedButton>Apply Job</OutlinedButton>
+          <OutlinedButton
+            onClick={() => applyJob()}
+          >Apply Job</OutlinedButton>
           </Stack>
           <Divider sx={{marginTop: 3, marginBottom: 2}} />
           <Stack direction={matches ? "column" : "row"} alignItems="flex-start">
@@ -167,6 +234,12 @@ const ViewJob = (props) => {
             </div>
           </Stack>
         </StyledCard>
+        <Snackbar
+          open={openSnackBar}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          message="Application Sent"
+        />
     </StyledDiv>
   )
 }
