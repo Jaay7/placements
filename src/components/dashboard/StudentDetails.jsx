@@ -35,10 +35,9 @@ const useStyles = makeStyles({
   form: {
     display: 'flex',
     flexDirection: 'column',
-    padding: '30px 30px',
-    boxShadow: '2px 2px 10px #e2e2e2',
+    // boxShadow: '2px 2px 10px #e2e2e2',
     borderRadius: 5,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
     backgroundColor: '#fff',
   },
   box: {
@@ -59,13 +58,8 @@ const useStyles = makeStyles({
 })
 
 const StyledDiv = styled((props) => <div {...props} />)(({ theme }) => ({
-  padding: '20px 60px',
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  [theme.breakpoints.down('sm')]: {
-    padding: '20px 20px'
-  }
 }));
 
 const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => ({
@@ -139,9 +133,9 @@ const StudentDetails = () => {
   });
 
   return (
-    <div style={{height: 'calc(100vh - 64px)', backgroundColor: '#f5f5f5'}}>
+    <div style={{height: 'max-content'}}>
     {loading ? <StyledDiv>
-      <CircularProgress color="inherit" />
+      <CircularProgress size="small" color="inherit" />
     </StyledDiv> :
     error && error.message === 'StudentDetails matching query does not exist.' ? <StyledDiv>
       <div className={classes.form} style={{marginTop: 20}}>
@@ -203,9 +197,6 @@ const StudentDetails = () => {
     </StyledDiv> :
       error ? <div>Error! {error.message}</div> :
     <StyledDiv>
-      <Typography gutterBottom variant="h5" component="h2" align="center">
-        Student Details
-      </Typography>
       <div className={classes.form}>
         <IconButton 
           size='small'
