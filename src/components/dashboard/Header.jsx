@@ -131,7 +131,7 @@ const Header = (props) => {
               <>
                 <Link className={location.pathname === '/home' ? classes.activeNavLink : classes.navLink} to="/home">Home</Link>
                 <Link className={location.pathname === '/my-jobs' ? classes.activeNavLink : classes.navLink} to="/my-jobs">My Jobs</Link>
-                <Link className={location.pathname === '/my-details' ? classes.activeNavLink : classes.navLink} to="/my-details">My Details</Link>
+                {/* <Link className={location.pathname === '/my-details' ? classes.activeNavLink : classes.navLink} to="/my-details">My Details</Link> */}
                 <span style={{flexGrow: 1}}></span>
                 <Link className={location.pathname === '/profile' ? classes.activeNavLink : classes.navLink} to="/profile">Profile</Link>
               </>
