@@ -1,9 +1,13 @@
 import React from 'react'
 import { useQuery, gql } from "@apollo/client";
-import { Typography, Button, Stack, useMediaQuery } from '@mui/material';
+import { Typography, Button, Stack, useMediaQuery, Tab, Tabs } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
+import PropTypes from 'prop-types';
+import { Box } from '@mui/material';
+import StudentDetails from './StudentDetails';
+import SavedJobs from './../screens/SavedJobs';
 
 const get_user_data = gql`
   query {
@@ -34,6 +38,79 @@ const useStyles = makeStyles({
   }
 })
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.number.isRequired,
+  value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
+
+const AntTabs = styled(Tabs)({
+  borderBottom: '1px solid #e8e8e8',
+  marginTop: 30,
+  '& .MuiTabs-indicator': {
+    backgroundColor: '#859d76',
+  },
+});
+
+const AntTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) => ({
+  textTransform: 'none',
+  minWidth: 0,
+  [theme.breakpoints.up('sm')]: {
+    minWidth: 0,
+  },
+  marginRight: theme.spacing(1),
+  fontFamily: [
+    '-apple-system',
+    'BlinkMacSystemFont',
+    '"Segoe UI"',
+    'Roboto',
+    '"Helvetica Neue"',
+    'Arial',
+    'sans-serif',
+    '"Apple Color Emoji"',
+    '"Segoe UI Emoji"',
+    '"Segoe UI Symbol"',
+  ].join(','),
+  '&:hover': {
+    color: '#b5cea5',
+    opacity: 1,
+  },
+  '&.Mui-selected': {
+    color: '#859d76',
+  },
+  '&.Mui-focusVisible': {
+    backgroundColor: '#859d76',
+  },
+}));
+
 const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => ({
   marginTop: '10px',
   width: 'max-content',
@@ -55,7 +132,8 @@ const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => 
 const StyledDiv = styled((props) => <div {...props} />)(({ theme }) => ({
   padding: '20px 60px',
   backgroundColor: '#f8f8f8',
-  height: '100vh',
+  height: '100%',
+  minHeight: '100vh',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -89,6 +167,13 @@ const Profile = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const matchesMD = useMediaQuery(theme.breakpoints.down('md'));
+
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   const { data, loading, error } = useQuery(get_user_data, {
     context: {
       headers: {
@@ -119,6 +204,22 @@ const Profile = () => {
           <span style={{flex: 1}}></span>
           <ContainedButton style={{marginTop: matchesMD ? 10 : 60}}>Edit Profile</ContainedButton>
         </Stack>
+        <AntTabs 
+          value={value} 
+          onChange={handleChange} 
+          variant="scrollable"
+          scrollButtons="auto"
+          aria-label="ant example"
+        >
+          <AntTab label="My Details" {...a11yProps(0)} />
+          <AntTab label="Saved Jobs" {...a11yProps(1)} />
+        </AntTabs>
+        <TabPanel value={value} index={0}>
+          <StudentDetails />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <SavedJobs />
+        </TabPanel>
       </StyledCard>
         <ContainedButton
           onClick={handleLogout}
