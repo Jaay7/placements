@@ -3,7 +3,7 @@ import { useQuery, gql } from "@apollo/client";
 import { CircularProgress, InputAdornment, TextField, Typography, Stack, Chip, Button } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { styled } from '@mui/material/styles';
-import { Search, PlaceRounded, BookmarkBorderRounded } from '@mui/icons-material';
+import { Search, PlaceRounded, BookmarkBorderRounded, BookmarkRounded } from '@mui/icons-material';
 import { Link } from 'react-router-dom'
 
 const get_user_data = gql`
@@ -21,30 +21,22 @@ const get_all_jobs = gql`
   query AllJobs {
     jobs {
       id
+      jobTitle
       companyName
-			companyDescription
-			companyLogo
-			companyWebsite
-			companyEmail
-			companyPhone
-			companyAddress
-			companyCity
-			companyState
-			jobTitle
-			jobDescription
-			jobRequirements
-			jobSalary
-			jobLocation
-			jobType
-			jobCategory
-			jobMinQualifications
-			jobPrefQualifications
-			jobExperience
-			jobEducation
-			jobSkills
-			jobStartDate
-			jobCreatedAt
-			jobUpdatedAt
+      companyLogo
+      jobLocation
+    }
+  }
+`;
+
+const get_saved_jobs = gql`
+  query UserSavedJobs {
+    userSavedJobs {
+      id
+      jobTitle
+      companyName
+      companyLogo
+      jobLocation
     }
   }
 `;
@@ -169,6 +161,15 @@ const GetJobs = () => {
     pollInterval: 500
   });
 
+  const { data: savedJobsData, loading: loading2, error: error2 } = useQuery(get_saved_jobs, {
+    context: {
+      headers: {
+        authorization: 'JWT ' + localStorage.getItem('token')
+      },
+    },
+    pollInterval: 500
+  })
+
   return (
     loading ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
     error ? <Typography>Oops! Something went wrong.</Typography> :
@@ -192,7 +193,13 @@ const GetJobs = () => {
             })}
           </Stack>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{marginTop: 2}}>
-            <BookmarkBorderRounded style={{color: '#293934'}} />
+            {
+              loading2 ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
+              error2 ? <Typography>Oops! Something went wrong.</Typography> :
+              savedJobsData.userSavedJobs.map(savedJob => savedJob.id).includes(job.id) ?
+              <BookmarkRounded style={{color: '#293934'}} /> :
+              <BookmarkBorderRounded style={{color: '#293934'}} />
+            }
             <ContainedButton component={Link} to={`/jobs/${job.id}`}>View Job</ContainedButton>
           </Stack>
         </StyledCard>
