@@ -134,9 +134,7 @@ const StudentDetails = () => {
 
   return (
     <div style={{height: 'max-content'}}>
-    {loading ? <StyledDiv>
-      <CircularProgress size="small" color="inherit" />
-    </StyledDiv> :
+    {loading ? <CircularProgress size={30} color="inherit" /> :
     error && error.message === 'StudentDetails matching query does not exist.' ? <StyledDiv>
       <div className={classes.form} style={{marginTop: 20}}>
       <Typography variant="h6">
