@@ -1,9 +1,8 @@
 import React from 'react'
 import { useQuery, gql, useMutation } from "@apollo/client";
-import { CircularProgress, Typography, Stack, Chip, Button } from '@mui/material';
+import { CircularProgress, Typography, Stack, Button } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { styled } from '@mui/material/styles';
-import { PlaceRounded, BookmarkBorderRounded } from '@mui/icons-material';
 import { Link } from 'react-router-dom'
 
 const get_registered_jobs = gql`
@@ -39,10 +38,17 @@ const useStyles = makeStyles({
     backgroundSize: 'cover',
     backgroundPosition: 'center',
   },
+  load: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '89vh'
+  }
 })
 
 const StyledCard = styled((props) => <div {...props} />)(({ theme }) => ({
-  padding: '20px 30px',
+  padding: '20px',
   width: '100%',
   minWidth: '720px',
   display: 'flex',
@@ -60,19 +66,17 @@ const StyledCard = styled((props) => <div {...props} />)(({ theme }) => ({
 
 const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => ({
   width: 'max-content',
-  padding: '6px 20px',
+  padding: '5px 18px',
   outline: 'none',
-  border: '2px solid #293934',
+  border: 'none',
   borderRadius: '50px',
-  backgroundColor: '#293934',
+  backgroundColor: '#b5cea5',
   textTransform: 'Capitalize',
-  color: '#f2f2f2',
   transition: 'all 0.3s ease-in-out',
+  color: '#293934da',
   fontWeight: 500,
   '&:hover': {
-    color: '#293934da',
-    backgroundColor: 'transparent',
-    border: '2px solid #293934',
+    backgroundColor: '#b5cea57c',
   }
 }));
 
@@ -103,10 +107,14 @@ const RegisteredJobs = () => {
         authorization: 'JWT ' + localStorage.getItem('token')
       }
     },
+    onCompleted: () => {
+      window.location.reload();
+    }
   });
 
   return (
-    loading ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
+    loading ? <div className={classes.load}>
+    <CircularProgress size={30} color="inherit" style={{alignSelf: 'center'}} /></div> :
     error ? <Typography>Oops! Something went wrong, {error.message}</Typography> :
     <StyledDiv>
       <div style={{alignSelf: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
@@ -114,35 +122,27 @@ const RegisteredJobs = () => {
         { data.userAppliedJobs.length > 0 ? data.userAppliedJobs.map(regJob => (
           <StyledCard key={regJob.id}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-              <Stack direction="column">
-                <Typography variant="h6">{regJob.companyName}</Typography>
-                <Typography variant="h5">{regJob.jobTitle}</Typography>
-              </Stack>
               <div className={classes.imgLogo}>
                 <img src={regJob.companyLogo} alt={regJob.companyName} height="100%" width="100%" />
               </div>
-            </Stack>
-            <Stack direction="row" alignItems="center" flexWrap={'wrap'} sx={{marginTop: 1}}>
-              <PlaceRounded />
-              <Typography variant="body1">{regJob.jobLocation.split('|').length}</Typography>
-              {regJob.jobLocation.split('|').sort().slice(0, 3).map((item, index) => {
-                return <Chip label={item} key={index} style={{marginTop: 5, marginLeft: 5}} />
-              })}
-            </Stack>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{marginTop: 2}}>
-              <BookmarkBorderRounded style={{color: '#293934'}} />
-              <div>
-                <ContainedButton component={Link} to={`/jobs/${regJob.id}`}>View Job</ContainedButton>
-                <ContainedButton style={{ opacity: 0.65}}
-                  onClick={() => {
-                    removeApplication({
-                      variables: {
-                        aplId: regJob.id
-                      },
-                    })
-                  }}
-                >Remove</ContainedButton>
-              </div>
+              <Stack direction="column">
+                <Typography variant="body1">{regJob.companyName}</Typography>
+                <Typography variant="h6">{regJob.jobTitle}</Typography>
+              </Stack>
+              <Stack direction="row" justifyContent="flex-end" alignItems="center">
+                <div>
+                  <Typography variant="body2" component={Link} color="#293934" style={{textDecoration: 'none', fontWeight: 'bold'}} to={`/jobs/${regJob.id}`}>View Job</Typography>
+                  <ContainedButton style={{ marginLeft: 10 }}
+                    onClick={() => {
+                      removeApplication({
+                        variables: {
+                          aplId: regJob.id
+                        },
+                      })
+                    }}
+                  >Remove</ContainedButton>
+                </div>
+              </Stack>
             </Stack>
           </StyledCard>
         )) : 
