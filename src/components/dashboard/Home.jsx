@@ -68,19 +68,22 @@ const StyledDiv = styled((props) => <div {...props} />)(({ theme }) => ({
 const StyledTextField = styled((props) => <TextField {...props} />)(({ theme }) => ({
   margin: 30,
   width: '100%',
+  minWidth: '660px',
   '& label.Mui-focused': {
     color: '#859d76',
   },
   '& .MuiInput-underline:after': {
+    borderWidth: 2,
     borderBottomColor: '#859d76',
   },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused fieldset': {
+      borderWidth: 2,
       borderColor: '#859d76',
     },
   },
-  [theme.breakpoints.up('sm')]: {
-    // width: '400px'
+  [theme.breakpoints.down('sm')]: {
+    minWidth: '100%',
   }
 }));
 
@@ -96,9 +99,9 @@ const Home = () => {
   });
 
   return (
-    loading ? <StyledDiv>
-      <CircularProgress color="inherit" style={{alignSelf: 'center'}} />
-    </StyledDiv> :
+    // loading ? <StyledDiv>
+    //   <CircularProgress color="inherit" style={{alignSelf: 'center'}} />
+    // </StyledDiv> :
     error ? <StyledDiv>Oops! Something went wrong. {error.message}</StyledDiv> :
     <StyledDiv>
       {/* <Typography variant='h6'>Welcome, {data.me.username}!</Typography>
@@ -139,7 +142,7 @@ const StyledCard = styled((props) => <div {...props} />)(({ theme }) => ({
 
 const ContainedButton = styled((props) => <Button {...props} />)(({ theme }) => ({
   width: 'max-content',
-  padding: '6px 20px',
+  padding: '5px 18px',
   outline: 'none',
   border: '2px solid #293934',
   borderRadius: '50px',
@@ -171,31 +174,31 @@ const GetJobs = () => {
   })
 
   return (
-    loading ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
+    loading ? <CircularProgress size={30} color="inherit" style={{alignSelf: 'center'}} /> :
     error ? <Typography>Oops! Something went wrong.</Typography> :
     <div>
       {data.jobs.map(job => (
         <StyledCard key={job.id}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Stack direction="column">
-              <Typography variant="h6">{job.companyName}</Typography>
-              <Typography variant="h5">{job.jobTitle}</Typography>
+              <Typography variant="body1">{job.companyName}</Typography>
+              <Typography variant="h6">{job.jobTitle}</Typography>
             </Stack>
             <div className={classes.imgLogo}>
               <img src={job.companyLogo} alt={job.companyName} height="100%" width="100%" />
             </div>
           </Stack>
-          <Stack direction="row" alignItems="center" flexWrap={'wrap'} sx={{marginTop: 1}}>
+          <Stack direction="row" alignItems="center" flexWrap={'wrap'}>
             <PlaceRounded />
             <Typography variant="body1">{job.jobLocation.split('|').length}</Typography>
             {job.jobLocation.split('|').sort().slice(0, 3).map((item, index) => {
               return <Chip label={item} key={index} style={{marginTop: 5, marginLeft: 5}} />
             })}
           </Stack>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{marginTop: 2}}>
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
             {
               loading2 ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
-              error2 ? <Typography>Oops! Something went wrong.</Typography> :
+              error2 ? <Typography>Failed</Typography> :
               savedJobsData.userSavedJobs.map(savedJob => savedJob.id).includes(job.id) ?
               <BookmarkRounded style={{color: '#293934'}} /> :
               <BookmarkBorderRounded style={{color: '#293934'}} />
