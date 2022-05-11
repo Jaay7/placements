@@ -99,7 +99,7 @@ const SavedJobs = () => {
   });
 
   return (
-    loading ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
+    loading ? <CircularProgress size={30} color="inherit" style={{alignSelf: 'center'}} /> :
     error ? <Typography>Oops! Something went wrong, {error.message}</Typography> :
     <StyledDiv>
       <div style={{alignSelf: 'center', alignItems: 'center', display: 'flex', flexDirection: 'column'}}>
