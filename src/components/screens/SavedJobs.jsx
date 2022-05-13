@@ -1,6 +1,6 @@
 import React from 'react'
 import { useQuery, gql, useMutation } from "@apollo/client";
-import { CircularProgress, Typography, Stack, Button } from '@mui/material';
+import { CircularProgress, Typography, Stack, Button, Snackbar } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom'
@@ -81,6 +81,17 @@ const StyledDiv = styled((props) => <div {...props} />)(({ theme }) => ({
 
 const SavedJobs = () => {
   const classes = useStyles();
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [snackBarMessage, setSnackBarMessage] = React.useState('');
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
+  };
+
   const { data, loading, error } = useQuery(get_saved_jobs, {
     context: {
       headers: {
@@ -96,6 +107,14 @@ const SavedJobs = () => {
         authorization: 'JWT ' + localStorage.getItem('token')
       }
     },
+    onCompleted: (data) => {
+      setSnackBarMessage(data.removeSavedJob.response);
+      setOpenSnackBar(true);
+    },
+    onError: (error) => {
+      setSnackBarMessage(error.message);
+      setOpenSnackBar(true);
+    }
   });
 
   return (
@@ -133,6 +152,12 @@ const SavedJobs = () => {
           <Typography>You haven't Saved any jobs</Typography>
         }
       </div>
+      <Snackbar
+        open={openSnackBar}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message={snackBarMessage}
+      />
     </StyledDiv>
   )
 }
