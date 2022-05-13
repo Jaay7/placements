@@ -5,6 +5,7 @@ import { CircularProgress, Typography, Stack, Button, Chip, Divider, useMediaQue
 import { styled, useTheme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import { PlaceRounded, BookmarkBorderRounded, ChevronLeft, BookmarkRounded } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 const get_job = gql`
   query Job($id: ID!) {
@@ -50,9 +51,37 @@ const get_saved_jobs = gql`
   }
 `;
 
+const get_applied_jobs = gql`
+  query UserAppliedJobs {
+    userAppliedJobs {
+      id
+      jobTitle
+      companyName
+      companyLogo
+      jobLocation
+    }
+  }
+`;
+
 const apply_job = gql`
   mutation ApplyJob($jobId: ID!) {
     applyJob(jobId: $jobId) {
+      response
+    }
+  }
+`;
+
+const save_job = gql`
+  mutation SaveJob($jobId: ID!) {
+    saveJob(jobId: $jobId) {
+      response
+    }
+  }
+`;
+
+const remove_saved_job = gql`
+  mutation RemoveSavedJob($jobId: ID!) {
+    removeSavedJob(jobId: $jobId) {
       response
     }
   }
@@ -115,6 +144,7 @@ const ViewJob = (props) => {
   const navigate = useNavigate();
 
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
+  const [snackBarMessage, setSnackBarMessage] = React.useState('');
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -138,6 +168,15 @@ const ViewJob = (props) => {
     pollInterval: 500
   })
 
+  const { data: appliedJobsData, loading: loading3, error: error3 } = useQuery(get_applied_jobs, {
+    context: {
+      headers: {
+        authorization: 'JWT ' + localStorage.getItem('token')
+      },
+    },
+    pollInterval: 500
+  })
+
   const [applyJob] = useMutation(apply_job, {
     context: {
       headers: {
@@ -145,10 +184,49 @@ const ViewJob = (props) => {
       }
     },
     variables: { jobId: id },
-    onCompleted: () => {
+    onCompleted: (data) => {
       setOpenSnackBar(true);
+      setSnackBarMessage(data.applyJob.response);
+    },
+    onError: (error) => {
+      setOpenSnackBar(true);
+      setSnackBarMessage(error.message);
     }
   });
+
+  const [saveJob] = useMutation(save_job, {
+    context: {
+      headers: {
+        authorization: 'JWT ' + localStorage.getItem('token')
+      }
+    },
+    variables: { jobId: id },
+    onCompleted: (data) => {
+      setOpenSnackBar(true);
+      setSnackBarMessage(data.saveJob.response);
+    },
+    onError: (error) => {
+      setOpenSnackBar(true);
+      setSnackBarMessage(error.message);
+    }
+  })
+
+  const [removeSavedJob] = useMutation(remove_saved_job, {
+    context: {
+      headers: {
+        authorization: 'JWT ' + localStorage.getItem('token')
+      }
+    },
+    variables: { jobId: id },
+    onCompleted: (data) => {
+      setOpenSnackBar(true);
+      setSnackBarMessage(data.removeSavedJob.response);
+    },
+    onError: (error) => {
+      setOpenSnackBar(true);
+      setSnackBarMessage(error.message);
+    }
+  })
 
   return (
     loading ? <StyledDiv>
@@ -180,22 +258,25 @@ const ViewJob = (props) => {
           <div style={{display: 'flex', alignItems: 'center', padding: '6px 20px', marginRight: 20, cursor: 'pointer'}}>
           {
               loading2 ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
-              error2 ? <Typography>Oops! Something went wrong.</Typography> :
+              error2 ? <Typography>Failed!</Typography> :
               savedJobsData.userSavedJobs.map(savedJob => savedJob.id).includes(data.job.id) ?
-              <>
+              <Stack direction="row" alignItems="center" onClick={() => removeSavedJob()}>
                 <BookmarkRounded style={{color: '#293934'}} />
                 <Typography variant="body2" color="#293934" style={{fontWeight: 500}}>Saved</Typography>
-              </> :
-              <>
+              </Stack> :
+              <Stack direction="row" alignItems="center" onClick={() => saveJob()}>
                 <BookmarkBorderRounded style={{color: '#293934', marginRight: 5}} />
                 <Typography variant="body2" color="#293934" style={{fontWeight: 500}}>Save</Typography>
-              </>
-            }
-            
+              </Stack>
+            } 
           </div>
-          <OutlinedButton
-            onClick={() => applyJob()}
-          >Apply Job</OutlinedButton>
+          {
+            loading3 ? <CircularProgress size="small" color="inherit" style={{alignSelf: 'center'}} /> :
+            error3 ? <Typography>Failed!</Typography> :
+            appliedJobsData.userAppliedJobs.map(appliedJob => appliedJob.id).includes(data.job.id) ?
+              <Typography variant="body1" color="inherit" >You have Applied for this Job. <Link style={{color: '#293934', fontWeight: 500}} to="/my-jobs">View all</Link></Typography> : 
+              <OutlinedButton onClick={() => applyJob()}>Apply Job</OutlinedButton>
+          }
           </Stack>
           <Divider sx={{marginTop: 3, marginBottom: 2}} />
           <Stack direction={matches ? "column" : "row"} alignItems="flex-start">
@@ -238,7 +319,7 @@ const ViewJob = (props) => {
           open={openSnackBar}
           autoHideDuration={6000}
           onClose={handleClose}
-          message="Application Sent"
+          message={snackBarMessage}
         />
     </StyledDiv>
   )
