@@ -72,12 +72,12 @@ const Login = () => {
   const classes = useStyles();
   const navigate = useNavigate();
 
-  const [ email, setEmail ] = React.useState('');
+  const [ username, setUsername ] = React.useState('');
   const [ password, setPassword ] = React.useState('');
 
   const [ login, {data, loading, error}] = useMutation(login_user, {
     variables: {
-      email,
+      username,
       password
     }
   });
@@ -96,11 +96,11 @@ const Login = () => {
         { error && <Typography color="red">Oops! Something went wrong.</Typography> }
         <Typography variant="h6">Login</Typography>
         <StyledTextField 
-          label="Email" 
+          label="Username" 
           margin="normal" 
           size='small'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <StyledTextField 
           label="Password" 

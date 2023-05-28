@@ -66,7 +66,7 @@ const StyledDiv = styled((props) => <div {...props} />)(({ theme }) => ({
 }));
 
 const StyledTextField = styled((props) => <TextField {...props} />)(({ theme }) => ({
-  margin: 30,
+  margin: 20,
   width: '100%',
   minWidth: '660px',
   '& label.Mui-focused': {
@@ -133,7 +133,7 @@ const StyledCard = styled((props) => <div {...props} />)(({ theme }) => ({
   backgroundColor: '#e7ffd6',
   backdropFilter: 'blur(5px)',
   borderRadius: '8px',
-  marginTop: '20px',
+  marginTop: '10px',
   [theme.breakpoints.down('md')]: {
     padding: '20px 20px',
     minWidth: '100%',
