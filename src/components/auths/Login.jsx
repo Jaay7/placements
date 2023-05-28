@@ -72,12 +72,12 @@ const Login = () => {
   const classes = useStyles();
   const navigate = useNavigate();
 
-  const [ username, setUsername ] = React.useState('');
+  const [ email, setEmail ] = React.useState('');
   const [ password, setPassword ] = React.useState('');
 
   const [ login, {data, loading, error}] = useMutation(login_user, {
     variables: {
-      username,
+      email,
       password
     }
   });
@@ -96,11 +96,11 @@ const Login = () => {
         { error && <Typography color="red">Oops! Something went wrong.</Typography> }
         <Typography variant="h6">Login</Typography>
         <StyledTextField 
-          label="Username" 
+          label="Email" 
           margin="normal" 
           size='small'
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <StyledTextField 
           label="Password" 
@@ -121,7 +121,7 @@ const Login = () => {
             }
           }}
         >{loading ? <CircularProgress size={28} color="inherit" /> : "Login"}</ContainedButton>
-        <Typography style={{marginTop: 10}}>Don't have an account? <Link to="/signup" className={classes.links}>Signup</Link></Typography>
+        {/* <Typography style={{marginTop: 10}}>Don't have an account? <Link to="/signup" className={classes.links}>Signup</Link></Typography> */}
       </div>
     </div>
     </>
